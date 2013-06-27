@@ -49,9 +49,21 @@ function bind_column_sort_action_to(link_element) {
 function bind_edit_button_to(edit_button) {
   edit_button.on('click', function(e) {
     e.preventDefault();
-    var task_id = $(this).attr('data-id');
+    var task_id = $(this).data('id');
+    $('#edit-submit').attr('data-id', task_id)
     var task_row = $(this).parent().parent();
-    var name = $.trim(task_row.find('.name').text());
+    
+    var name = task_row.find('.name').text()
+    $('#task_name').val(name.trim())
+
+    var description = task_row.find('.desc').text()
+    $('#task_desc').val(description.trim())
+
+    var duedate = task_row.find('.duedate').text()
+    $('#task_duedate').val(duedate.trim())
+
+    var priority_id = task_row.find('.priority-id').text()
+    $('#task_priority_id option[value=' + priority_id +']').prop('selected', true);
   });
 }
 
@@ -183,9 +195,9 @@ $(function(){
   var delete_button_elements = $('.delete-button');
   bind_delete_button_action_to(delete_button_elements);
 
-  var edit_button = $('.edit-button')
-  bind_edit_button(edit_button)
+  var edit_button = $('.edit-button');
+  bind_edit_button_to(edit_button);
 
-  var update_button = $('#edit-submit')
-  bind_update_button(update_button)
+  var update_button = $('#edit-submit');
+  bind_update_button(update_button);
 });
