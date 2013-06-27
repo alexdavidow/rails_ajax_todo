@@ -1,0 +1,26 @@
+= form_for @priority do |f|
+  = f.label :name
+  = f.text_field :name
+  = f.label :urgency_index
+  = f.text_field :urgency_index 
+  
+  = f.label :color
+  / = f._field :color
+  %input#priority_color{type: 'color', name: 'priority[color]'}
+
+  = f.submit id: 'get_priority'
+
+%table#list
+  %thead
+    %th Priority Name
+    %th Priority Urgency
+    %th Priority Color 
+  %tbody
+    - @priorities.each do |x|
+      %tr.priority
+        %td= x.name
+        %td= x.urgency_index
+        %td= x.color
+        %td{style: "background-color: #{x.color}"}  
+
+= javascript_include_tag 'priorities'

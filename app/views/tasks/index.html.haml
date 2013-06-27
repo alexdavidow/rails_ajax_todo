@@ -1,0 +1,8 @@
+%table#list
+  %tbody
+    - @tasks.each do |t|
+      %tr.task
+        %td= t.name
+        %td= t.desc
+        %td= t.duedate
+        %td= t.priority_id

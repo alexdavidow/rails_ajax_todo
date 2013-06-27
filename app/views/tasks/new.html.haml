@@ -1,0 +1,44 @@
+= form_for @task do |f|
+  = f.label :name
+  = f.text_field :name
+  = f.label :desc
+  = f.text_field :desc
+  = f.label :duedate
+  = f.text_field :duedate
+  = f.label :priority_id
+  = f.collection_select :priority_id, @priorities, :id, :name, include_blank: true, prompt: '-- Choose Priority --'
+  = f.submit id: 'submit', class: 'button success small'
+  = f.submit id: 'edit-submit', class: 'button small hidden', value: 'Update Task'
+
+%table#tasks
+  %thead
+    %th#name
+      =link_to 'Name', '#', id: 'name-sort'
+    %th#description
+      =link_to 'Description', '#', id: 'desc-sort'
+    %th#duedate
+      =link_to 'Due Date', '#', id: 'duedate-sort'
+    / %th Priority ID
+    %th#ui
+      =link_to 'Urgency Index', '#', id: 'ui-sort'
+    %th#options
+      =link_to 'Options', '#'
+  %tbody
+    - @tasks.each do |t|
+      %tr.task{style: 'background-color:' +t.priority.color}
+        %td.name
+          = t.name
+        %td.desc
+          = t.desc
+        %td.duedate
+          = t.duedate
+        %td.ui
+          = t.priority.urgency_index
+        %td.priority-id{style: 'display: none;'}
+          = t.priority.id
+        %td.options
+          =link_to 'Delete', "#{t.id}", :'data-id' => t.id, class: 'small alert button delete-button'
+          =link_to 'Edit', "#", :'data-id' => t.id, class: 'small button edit-button info'
+
+= javascript_include_tag 'tasks'
+

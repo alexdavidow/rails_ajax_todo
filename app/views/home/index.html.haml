@@ -1,0 +1,24 @@
+.row
+  .large-6.columns.small-12
+    %table#list
+      %thead
+        %th Name
+        %th Description
+        %th Due Date
+        %th Priority ID
+      %tbody
+        - @tasks.each do |t|
+          %tr.task{style: 'background-color:' +t.priority.color}
+            %td= t.name
+            %td= t.desc
+            %td= t.duedate
+            %td= t.priority_id
+  .large-6.columns.small-12            
+    %table#priorities
+      %tbody
+      - @priorities.each do |x|
+        %tr.priority
+          %td= x.name
+          %td= x.urgency_index
+          %td= x.color
+          %td{style: "background-color: #{x.color}"} 
