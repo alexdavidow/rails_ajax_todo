@@ -10,7 +10,6 @@ class TasksController < ApplicationController
 	def create
 		@task = Task.new(params[:task])
 		@task.save!
-		@task['color'] = @task.priority.color
 		render json: {task: @task, priority: @task.priority}
 	end
 

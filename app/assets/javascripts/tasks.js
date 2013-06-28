@@ -1,24 +1,25 @@
 var sort_column = 'ui';
 
 function add_node(task) {
-  task_name = task.children('.name').text();
-  task_urgency = task.children('.priority-id').text();
-  var row_list = $('#tasks tbody').children();
+  // task_name = task.children('.name').text();
+  // task_urgency = task.children('.priority-id').text();
+  // var row_list = $('#tasks tbody').children();
 
-  for(var i = 0; i< row_list.size(); i++){
-    node = $(row_list[i]);
-    node_name = node.children('.name').text().trim();
-    node_urgency = node.children('.priority-id').text().trim();
+  // for(var i = 0; i< row_list.size(); i++){
+  //   node = $(row_list[i]);
+  //   node_name = node.children('.name').text().trim();
+  //   node_urgency = node.children('.priority-id').text().trim();
 
-    if (task_urgency > node_urgency) {
-      task.insertBefore(node);
-      return;
-    } else if ((task_urgency == node_urgency) && task_name < node_name){
-      task.insertBefore(node);
-      return;
-    }
-  }
+  //   if (task_urgency > node_urgency) {
+  //     task.insertBefore(node);
+  //     return;
+  //   } else if ((task_urgency == node_urgency) && task_name < node_name){
+  //     task.insertBefore(node);
+  //     return;
+  //   }
+  // }
   $('#tasks tbody').append(task);
+  sort_rows();
 }
 
 //Called when one of the header cells is clicked, figures out which sorting that cell corresponds to (by doing some tricky
@@ -61,30 +62,28 @@ function column_compare(a, b) {
   }
 }
 
-function bind_edit_button_to(edit_button) {
-  edit_button.on('click', function(e) {
-    e.preventDefault();
-    var task_row = $(this).parent().parent();
-    var task_id = task_row.data('task-id');
-    $('#edit-submit').attr('data-task-id', task_id);
-    // var name = task_row.find('.name').text();
-    // $('#task_name').val(name.trim());
+function populate_form(e) {
+  e.preventDefault();
+  var task_row = $(this).parent().parent();
+  var task_id = task_row.attr('data-task-id');
 
-    // var description = task_row.find('.desc').text();
-    // $('#task_desc').val(description.trim());
+  var name = $.trim(task_row.find('.name').text());
+  var desc = $.trim(task_row.find('.desc').text());
+  var duedate = $.trim(task_row.find('.duedate').text());
+  var ui = $.trim(task_row.find('.ui').text());
+  var priority_id = $.trim(task_row.find('.priority-id').text());
+  
+  $('#task_name').val(name);
+  $('#task_desc').val(desc);
+  $('#task_duedate').val(duedate);
+  $('#task_priority_id option[value=' + priority_id +']').prop('selected', true);
 
-    // var duedate = task_row.find('.duedate').text();
-    // $('#task_duedate').val(duedate.trim());
-
-    var priority_id = task_row.find('.priority-id').text();
-    $('#task_priority_id option[value=' + priority_id +']').prop('selected', true);
-
-    _.each(['name', 'desc', 'duedate'], function(attr_name){
-    $('#task_' + attr_name).val(task_row.children('.' + attr_name).text().trim())
-    });
-    $('#submit').addClass('hidden');
-    $('#edit-submit').removeClass('hidden');
-  });
+    // _.each(['name', 'desc', 'duedate'], function(attr_name){
+    // $('#task_' + attr_name).val(task_row.children('.' + attr_name).text().trim())
+    // });
+  $('#submit').addClass('hidden');
+  $('#edit-submit').removeClass('hidden');
+  $('#edit-submit').attr('data-task-id', task_id);
 }
 
 
@@ -142,45 +141,46 @@ function bind_delete_button_action_to(link_element) {
   });
 }
 
-function bind_task_create_to(submit_element){
-  submit_element.on('click', function(e) {
-    //prevents the default behavior of the form, i.e. submitting the form
-    //Notice that if this file fails to load or your syntax errors, you will not prevent the default and
-    // clicking submit will render a new page with your data on it
-    e.preventDefault();
+function create_task(e){
+  e.preventDefault();
+  var params = {
+    task: {
+      name: $('#task_name').val(),
+      desc: $('#task_desc').val(),
+      duedate: $('#task_duedate').val(),
+      priority_id: $('#task_priority_id').val()
+    }
+  };
 
-    var settings = {
-      task: {
-        name: $('#task_name').val(),
-        desc: $('#task_desc').val(),
-        duedate: $('#task_duedate').val(),
-        priority_id: $('#task_priority_id').val()
-      }
-    };
+  $.post('/tasks', params, function(data){
+    // To show the data id
+    // console.log(data.task.id)
+    var task = $('<tr>').css('background-color', data.priority.color).attr('task-id', data.task.id);
+    //Add the arrow buttons
+    $('<td class="name">').text(data.task.name).appendTo(task);
+    $('<td class="desc">').text(data.task.desc).appendTo(task);
+    $('<td class="duedate">').text(data.task.duedate).appendTo(task);
+    $('<td class="ui">').text(data.priority.urgency_index).appendTo(task);
+    $('<td class="priority-id">').text(data.priority.id).hide().appendTo(task);
 
-    $.post('/tasks', settings, function(data){
-      // To show the data id
-      // console.log(data.task.id)
-      var task = $('<tr>').css('background-color', data.priority.color);
-      $('<td class="name">').text(data.task.name).appendTo(task);
-      $('<td class="desc">').text(data.task.desc).appendTo(task);
-      $('<td class="duedate">').text(data.task.duedate).appendTo(task);
-      $('<td class="ui">').text(data.priority.urgency_index).appendTo(task);
-      $('<td class="priority-id">').text(data.priority.id).hide().appendTo(task);
-
-      // Need to add a td with the buttons when creating a new entry.
-      var data_cell_options = $('<td>').addClass('options');
-      var delete_button = $('<a>').text('Delete').attr('data-task-id', data.task.id).attr('href', '#').addClass('button delete-button small alert').appendTo(data_cell_options);
-      var edit_button = $('<a>').text('Edit').attr('data-task-id', data.task.id).attr('href', '#').addClass('button edit-button small').appendTo(data_cell_options);
-      task.append(data_cell_options)
-      //bind the delete functionality to the newly created button
-
-      add_node(task);
-      bind_delete_button_action_to($('.delete-button'));
-      $('#new_task input[type=text]').val('');
-      $('#task_priority_id').val('');
-    });
-  });
+    // Need to add a td with the buttons when creating a new entry.
+    var data_cell_options = $('<td>').addClass('options');
+    var delete_button = $('<a>').text('Delete').attr('data-task-id', data.task.id).attr('href', '#').addClass('button delete-button small alert').appendTo(data_cell_options);
+    var edit_button = $('<a>').text('Edit').attr('data-task-id', data.task.id).attr('href', '#').addClass('button edit-button small').appendTo(data_cell_options);
+    task.append(data_cell_options)
+    // Adding arrows
+    var arrows = $('<td>');
+    var up_arrow_link = $('<a>').attr('href', '#').appendTo(arrows);
+    var up_arrow = $('<i>').addClass('general foundicon-up-arrow').appendTo(up_arrow_link);
+    var down_arrow_link = $('<a>').attr('href', '#').appendTo(arrows);
+    var down_arrow = $('<i>').addClass('general foundicon-down-arrow').appendTo(down_arrow_link);
+    arrows.appendTo(task);
+    //bind the delete functionality to the newly created button
+    add_node(task);
+    bind_delete_button_action_to($('.delete-button'));
+    $('#new_task input[type=text]').val('');
+    $('#task_priority_id').val('');
+  }); 
 }
 
 function arrow_up(e) {
@@ -220,18 +220,16 @@ function arrow_down(e) {
 $(function(){
   //When any of the th links is clicked, sorts by the relevant field. I have refactored this to only be a single event handler
   //by grabbing the field title out of the link's id. A little dangerous because if I change my HTML much it breaks my JS
- $('th a').on('click', sort_table);
+  $('th a').on('click', sort_table);
 
   //When the user clicks on the form's submit button, creates a new task and displays it in the table of tasks, sorted by priority.urgency_index
-  var task_form_submit = $('#submit');
-  bind_task_create_to(task_form_submit);
+  $('#submit').on('click', create_task);
 
   //Call our bind function and bind onclick action to delete butons
   var delete_button_elements = $('.delete-button');
   bind_delete_button_action_to(delete_button_elements);
 
-  var edit_button = $('.edit-button');
-  bind_edit_button_to(edit_button);
+  $('tbody').on('click', '.edit-button', populate_form)
 
   var update_button = $('#edit-submit');
   bind_update_button(update_button);

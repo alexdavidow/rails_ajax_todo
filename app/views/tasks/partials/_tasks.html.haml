@@ -1,5 +1,5 @@
 - @tasks.each do |t|
-  %tr.task{style: 'background-color:' +t.priority.color, :'data-task-id' => t.id}
+  %tr.task{:'data-task-id' => t.id, style: "background-color: #{t.priority.color}"}
     %td.name
       = t.name
     %td.desc
