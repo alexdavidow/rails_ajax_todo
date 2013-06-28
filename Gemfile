@@ -4,9 +4,10 @@ gem 'rails'
 gem 'pg'
 gem 'jquery-rails'
 gem 'haml'
+gem 'sass-rails'
 
 group :assets do
-  gem 'sass-rails'
+
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'zurb-foundation'

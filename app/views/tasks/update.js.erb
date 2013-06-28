@@ -1,0 +1,26 @@
+$('#tasks tbody').empty().append("<%=j render partial: 'tasks/partials/tasks' %>");
+
+var task_row = $('#tasks tr[data-task-id='+ task_id+']')
+task_row.hide()
+  // Add a for loop to find the id, then call data[i]
+var task = $('<tr>').attr('data-task-id', data.task.id).css('background-color', data.priority.color);
+$('<td class="name">').text(data.task.name).appendTo(task);
+$('<td class="desc">').text(data.task.desc).appendTo(task);
+$('<td class="duedate">').text(data.task.duedate).appendTo(task);
+$('<td class="ui">').text(data.priority.urgency_index).appendTo(task);
+$('<td class="priority-id">').text(data.priority.id).hide().appendTo(task);
+
+var data_cell_options = $('<td>').addClass('options');
+var edit_button = $('<a>').attr('href', '#').text('Edit').addClass('small button edit-button info');
+var delete_button = $('<a>').attr('href', '#').text('Delete').addClass('small alert button delete-button');
+//  add data id to our delete buttong
+delete_button.attr('data-task-id', data.task.id)
+edit_button.attr('data-task-id', data.task.id)
+data_cell_options.append(delete_button)
+data_cell_options.append(edit_button)
+
+task.append(data_cell_options)
+//bind the delete functionality to the newly created button
+bind_delete_button_action_to(delete_button)
+bind_edit_button_to(edit_button)
+add_node(task)

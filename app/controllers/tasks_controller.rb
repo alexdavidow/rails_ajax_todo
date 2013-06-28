@@ -1,7 +1,9 @@
 class TasksController < ApplicationController
+	
+	before_filter :ordered_tasks, only: [:new, :update]
+
 	def new
 		@task = Task.new
-		@tasks = Task.joins(:priority).order('priorities.urgency_index DESC, name ASC' )
 		@priorities = Priority.all
 	end
 
@@ -18,12 +20,15 @@ class TasksController < ApplicationController
 
 	def update
 		@task = Task.find(params[:id])
-		@task.save!
-		render text: "I made it"
 		if @task.update_attributes(params[:task])
-			render json: {task: @task, desc: @task.desc, duedate: @task.duedate, urgency_index: @task.priority.urgency_index, color: @task.priority.color}
+			# render json: {task: @task, priority: @task.priority}
+			respond_to do |format|
+				format.js
+			end
 		else
-			render text: "This didn't work. You could blame me but isn't it your fault for trying?"	
+			respond_to do |format|
+				format.js { render status: 500, text: 'Server error'}
+			end
 		end
 	end
 
@@ -35,4 +40,22 @@ class TasksController < ApplicationController
 		# need to render some sort of response or redirect
 		render json: task
 	end
+
+	def arrow_up
+		@task = Task.find(params[:id])
+		@task.arrow_up
+		render json: @task.priority
+	end
+
+	def arrow_down
+		@task = Task.find(params[:id])
+		@task.arrow_down
+		render json: @task.priority
+	end
+
+	private
+	def ordered_tasks
+		@tasks = Task.joins(:priority).order('priorities.urgency_index DESC, name ASC' )
+	end
 end
+

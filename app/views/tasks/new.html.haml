@@ -23,22 +23,11 @@
       =link_to 'Urgency Index', '#', id: 'ui-sort'
     %th#options
       =link_to 'Options', '#'
+    %th#arrows
+      %p{class: 'general foundicon-up-arrow'}
+      %p{class: 'general foundicon-down-arrow'}
   %tbody
-    - @tasks.each do |t|
-      %tr.task{style: 'background-color:' +t.priority.color}
-        %td.name
-          = t.name
-        %td.desc
-          = t.desc
-        %td.duedate
-          = t.duedate
-        %td.ui
-          = t.priority.urgency_index
-        %td.priority-id{style: 'display: none;'}
-          = t.priority.id
-        %td.options
-          =link_to 'Delete', "#{t.id}", :'data-id' => t.id, class: 'small alert button delete-button'
-          =link_to 'Edit', "#", :'data-id' => t.id, class: 'small button edit-button info'
-
+    = render partial: 'tasks/partials/tasks'
+             
 = javascript_include_tag 'tasks'
 
