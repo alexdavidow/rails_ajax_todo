@@ -177,7 +177,7 @@ function create_task(e){
     arrows.appendTo(task);
     //bind the delete functionality to the newly created button
     add_node(task);
-    bind_delete_button_action_to($('.delete-button'));
+    // bind_delete_button_action_to($('.delete-button'));
     $('#new_task input[type=text]').val('');
     $('#task_priority_id').val('');
   }); 
@@ -192,6 +192,7 @@ function arrow_up(e) {
     type: 'PUT',
     url: '/tasks/' + task_id + '/arrow_up'
   }).success(function(data){
+    console.log(data.color)
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
     task_row.children('td.priority-id').text(data.id);
     task_row.children('td.ui').text(data.urgency_index);
@@ -209,10 +210,13 @@ function arrow_down(e) {
     type: 'PUT',
     url: '/tasks/' + task_id + '/arrow_down'
   }).success(function(data){
+    console.log(data.color)
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
     task_row.children('td.priority-id').text(data.id);
     task_row.children('td.ui').text(data.urgency_index);
-    task_row.animate({backgroundColor: data.color});
+    // task_row.animate({backgroundColor: data.color});
+    // add a 'style' attr with the data.color value
+    task_row.attr('style','backgroundColor: '+data.color);
     sort_rows();
   });
 }

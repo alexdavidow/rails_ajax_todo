@@ -21,7 +21,7 @@ p2 = Priority.create(name: 'Urgent', color: 'orange', urgency_index: 5)
 p3 = Priority.create(name: 'Important', color: 'yellow', urgency_index: 4)
 p4 = Priority.create(name: 'Neutral', color: 'lightgreen', urgency_index: 3)
 p5 = Priority.create(name: 'Casual', color: 'lightblue', urgency_index: 2)
-p6 = Priority.create(name: 'Unimportant', color: 'grey', urgency_index: 1)
+p6 = Priority.create(name: 'Unimportant', color: 'gray', urgency_index: 1)
 
 p1.tasks << t01 << t02
 p2.tasks << t03 << t04 << t05

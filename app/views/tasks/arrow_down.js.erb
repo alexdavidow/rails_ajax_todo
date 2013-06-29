@@ -1,0 +1,7 @@
+$('#tasks tbody').empty().append("<%=j render partial: 'tasks/partials/tasks' %>");
+
+var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
+task_row.children('td.priority-id').text(data.id);
+task_row.children('td.ui').text(data.urgency_index);
+task_row.animate({backgroundColor: data.color});
+sort_rows();
