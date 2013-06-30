@@ -196,7 +196,8 @@ function arrow_up(e) {
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
     task_row.children('td.priority-id').text(data.id);
     task_row.children('td.ui').text(data.urgency_index);
-    task_row.animate({backgroundColor: data.color});
+    task_row.css('background-color',data.color);
+    console.log("task row is", task_row.attr('style'))
     sort_rows();
   })
 }
@@ -214,9 +215,11 @@ function arrow_down(e) {
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
     task_row.children('td.priority-id').text(data.id);
     task_row.children('td.ui').text(data.urgency_index);
+    //this works, but there is now animation
+    task_row.css('background-color',data.color);
     // task_row.animate({backgroundColor: data.color});
     // add a 'style' attr with the data.color value
-    task_row.attr('style','backgroundColor: '+data.color);
+    // task_row.attr('style','backgroundColor: '+data.color);
     sort_rows();
   });
 }
